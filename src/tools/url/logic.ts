@@ -10,16 +10,19 @@ export interface UrlError {
 
 export type Result = UrlResult | UrlError;
 
-export function encode(input: string): Result {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TFn = (key: any, vars?: Record<string, string>) => string;
+
+export function encode(input: string, t: TFn = (k) => k): Result {
   try {
     const encoded = encodeURIComponent(input);
     return { ok: true, output: encoded };
   } catch {
-    return { ok: false, error: 'Failed to URL-encode input.' };
+    return { ok: false, error: t('url.error.encodeFailed') };
   }
 }
 
-export function decode(input: string): Result {
+export function decode(input: string, t: TFn = (k) => k): Result {
   if (!input.trim()) {
     return { ok: true, output: '' };
   }
@@ -31,9 +34,9 @@ export function decode(input: string): Result {
     if (match) {
       return {
         ok: false,
-        error: `Invalid URL encoding: '${match[0]}' is not a valid percent-encoded sequence.`,
+        error: t('url.error.invalidWithChar', { char: match[0] }),
       };
     }
-    return { ok: false, error: 'Invalid URL encoding: malformed percent-encoded sequence.' };
+    return { ok: false, error: t('url.error.invalidGeneric') };
   }
 }

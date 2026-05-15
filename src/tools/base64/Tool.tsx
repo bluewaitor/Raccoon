@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ToolLayout, InputPanel, OutputPanel, Explanation } from '../../components/ToolLayout';
 import { encode, decode } from './logic';
+import { useT } from '../../i18n/context';
 
 type Mode = 'encode' | 'decode';
 
@@ -8,12 +9,12 @@ export default function Base64Tool() {
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<Mode>('encode');
   const [copied, setCopied] = useState(false);
+  const { t } = useT();
 
   const result = useMemo(() => {
-    if (!input.trim() && mode === 'decode') return { ok: true as const, output: '' };
     if (!input.trim()) return { ok: true as const, output: '' };
-    return mode === 'encode' ? encode(input) : decode(input);
-  }, [input, mode]);
+    return mode === 'encode' ? encode(input, t) : decode(input, t);
+  }, [input, mode, t]);
 
   const error = result.ok ? null : result.error;
   const output = result.ok ? result.output : '';
@@ -31,26 +32,26 @@ export default function Base64Tool() {
     <>
       <ToolLayout error={error}>
         <InputPanel
-          label="Input"
+          label={t('common.input')}
           action={
             <button
               onClick={() => setMode(mode === 'encode' ? 'decode' : 'encode')}
               className="text-[11px] px-2 py-1 bg-surface-2 rounded text-text-muted hover:text-text-secondary transition-colors"
             >
-              {mode === 'encode' ? 'Decode' : 'Encode'}
+              {mode === 'encode' ? t('base64.decode') : t('base64.encode')}
             </button>
           }
         >
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={mode === 'encode' ? 'Type text to encode...' : 'Paste Base64 to decode...'}
+            placeholder={mode === 'encode' ? t('base64.encodePlaceholder') : t('base64.decodePlaceholder')}
             className="w-full bg-transparent border-none text-text-secondary text-[13px] leading-relaxed p-4 resize-none min-h-[240px] outline-none font-mono placeholder:text-text-dim"
             spellCheck={false}
           />
         </InputPanel>
         <OutputPanel
-          label="Output"
+          label={t('common.output')}
           action={
             <button
               onClick={copy}
@@ -63,7 +64,7 @@ export default function Base64Tool() {
                     : 'bg-surface-2 text-text-dim cursor-not-allowed'
               }`}
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? t('common.copied') : t('common.copy')}
             </button>
           }
         >
@@ -73,20 +74,19 @@ export default function Base64Tool() {
             </pre>
           ) : (
             <div className="p-4 text-[13px] text-text-dim min-h-[240px]">
-              {mode === 'encode' ? 'Type text to see the Base64 encoded output.' : 'Paste Base64 to see the decoded text.'}
+              {mode === 'encode' ? t('base64.encodeEmpty') : t('base64.decodeEmpty')}
             </div>
           )}
         </OutputPanel>
       </ToolLayout>
-      <Explanation title="What does this tool do?">
+      <Explanation title={t('common.whatDoesThisDo')}>
         <p className="text-[13px] text-text-muted leading-relaxed">
-          Encodes text to Base64 or decodes Base64 strings back to text.
-          Handles Unicode characters including Chinese and emoji.
+          {t('base64.explanation')}
         </p>
         <ul className="mt-2 text-[13px] text-text-muted leading-loose list-disc pl-5">
-          <li>Toggle between Encode and Decode modes</li>
-          <li>Supports full Unicode (emoji, CJK characters)</li>
-          <li>Instant output as you type</li>
+          <li>{t('base64.feature1')}</li>
+          <li>{t('base64.feature2')}</li>
+          <li>{t('base64.feature3')}</li>
         </ul>
       </Explanation>
     </>

@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.1.0] - 2025-05-15
+
+### Added
+- i18n support with Chinese (default) and English locales
+- LanguageToggle component in header for instant locale switching
+- 88 translation keys covering all UI strings and error messages
+- Locale persisted in localStorage (`raccoon-locale`)
+- Document title and html lang attribute update dynamically on locale change
+
+### Changed
+- Registry and tool logic files accept `t` translation function for localized errors
+- All hardcoded strings in tools, pages, and header replaced with `t()` calls
+
+### Tests
+- Expanded i18n context tests from 4 to 17 (locale persistence, document sync, error resilience)
+
 ## [1.0.0.0] - 2025-05-15
 
 ### Added

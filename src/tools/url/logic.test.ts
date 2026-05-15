@@ -52,7 +52,7 @@ describe('decode', () => {
     const result = decode('%ZZ');
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error).toContain('Invalid URL encoding');
+      expect(result.error).toContain('url.error.invalidWithChar');
     }
   });
 

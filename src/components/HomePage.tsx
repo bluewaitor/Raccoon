@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Command } from 'cmdk';
-import { tools } from '../registry';
+import { getTools } from '../registry';
+import { useT } from '../i18n/context';
 
 export function HomePage() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { t } = useT();
+  const tools = getTools(t);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -33,15 +36,15 @@ export function HomePage() {
           onClick={() => setOpen(true)}
           className="cursor-pointer text-2xl text-text-muted hover:text-text-secondary transition-colors"
         >
-          Search tools...
+          {t('home.searchPrompt')}
         </div>
-        <div className="mt-2 text-sm text-text-dim">Paste, convert, done.</div>
+        <div className="mt-2 text-sm text-text-dim">{t('home.tagline')}</div>
         <div className="mt-1 text-sm text-text-dim">
-          Press{' '}
+          {t('home.pressToStart')}
           <kbd className="bg-surface-2 border border-surface-3 rounded px-1.5 py-0.5 text-[11px] font-mono">
             ⌘K
-          </kbd>{' '}
-          to start
+          </kbd>
+          {t('home.toStart')}
         </div>
       </div>
 
@@ -61,12 +64,12 @@ export function HomePage() {
           style={{ animation: 'scaleIn 150ms ease-out' }}
         >
           <Command.Input
-            placeholder="Type a tool name or keyword..."
+            placeholder={t('home.searchPlaceholder')}
             className="w-full bg-transparent border-b border-surface-2 px-4 py-4 text-text-primary text-base outline-none placeholder:text-text-dim"
           />
           <Command.List className="p-2">
             <Command.Empty className="py-6 text-center text-sm text-text-muted">
-              No tools found. Try 'json', 'time', 'base64', or 'url'.
+              {t('home.emptyTools')}
             </Command.Empty>
             {tools.map((tool) => (
               <Command.Item

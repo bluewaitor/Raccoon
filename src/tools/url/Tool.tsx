@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ToolLayout, InputPanel, OutputPanel, Explanation } from '../../components/ToolLayout';
 import { encode, decode } from './logic';
+import { useT } from '../../i18n/context';
 
 type Mode = 'encode' | 'decode';
 
@@ -8,12 +9,12 @@ export default function URLTool() {
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<Mode>('encode');
   const [copied, setCopied] = useState(false);
+  const { t } = useT();
 
   const result = useMemo(() => {
-    if (!input.trim() && mode === 'decode') return { ok: true as const, output: '' };
     if (!input.trim()) return { ok: true as const, output: '' };
-    return mode === 'encode' ? encode(input) : decode(input);
-  }, [input, mode]);
+    return mode === 'encode' ? encode(input, t) : decode(input, t);
+  }, [input, mode, t]);
 
   const error = result.ok ? null : result.error;
   const output = result.ok ? result.output : '';
@@ -31,26 +32,26 @@ export default function URLTool() {
     <>
       <ToolLayout error={error}>
         <InputPanel
-          label="Input"
+          label={t('common.input')}
           action={
             <button
               onClick={() => setMode(mode === 'encode' ? 'decode' : 'encode')}
               className="text-[11px] px-2 py-1 bg-surface-2 rounded text-text-muted hover:text-text-secondary transition-colors"
             >
-              {mode === 'encode' ? 'Decode' : 'Encode'}
+              {mode === 'encode' ? t('url.decode') : t('url.encode')}
             </button>
           }
         >
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={mode === 'encode' ? 'Type text or URL to encode...' : 'Paste URL-encoded text to decode...'}
+            placeholder={mode === 'encode' ? t('url.encodePlaceholder') : t('url.decodePlaceholder')}
             className="w-full bg-transparent border-none text-text-secondary text-[13px] leading-relaxed p-4 resize-none min-h-[240px] outline-none font-mono placeholder:text-text-dim"
             spellCheck={false}
           />
         </InputPanel>
         <OutputPanel
-          label="Output"
+          label={t('common.output')}
           action={
             <button
               onClick={copy}
@@ -63,7 +64,7 @@ export default function URLTool() {
                     : 'bg-surface-2 text-text-dim cursor-not-allowed'
               }`}
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? t('common.copied') : t('common.copy')}
             </button>
           }
         >
@@ -73,20 +74,19 @@ export default function URLTool() {
             </pre>
           ) : (
             <div className="p-4 text-[13px] text-text-dim min-h-[240px]">
-              {mode === 'encode' ? 'Type text to see the URL-encoded output.' : 'Paste URL-encoded text to see the decoded result.'}
+              {mode === 'encode' ? t('url.encodeEmpty') : t('url.decodeEmpty')}
             </div>
           )}
         </OutputPanel>
       </ToolLayout>
-      <Explanation title="What does this tool do?">
+      <Explanation title={t('common.whatDoesThisDo')}>
         <p className="text-[13px] text-text-muted leading-relaxed">
-          Encodes or decodes URL components. Converts special characters to percent-encoded
-          format and back.
+          {t('url.explanation')}
         </p>
         <ul className="mt-2 text-[13px] text-text-muted leading-loose list-disc pl-5">
-          <li>Toggle between Encode and Decode modes</li>
-          <li>Handles Unicode and special characters</li>
-          <li>Useful for query strings and URL parameters</li>
+          <li>{t('url.feature1')}</li>
+          <li>{t('url.feature2')}</li>
+          <li>{t('url.feature3')}</li>
         </ul>
       </Explanation>
     </>
