@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ToolLayout, InputPanel, OutputPanel, Explanation } from '../../components/ToolLayout';
 import { formatJSON, minifyJSON } from './logic';
+import { useT } from '../../i18n/context';
 
 type Mode = 'format' | 'minify';
 
@@ -8,10 +9,11 @@ export default function JSONTool() {
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<Mode>('format');
   const [copied, setCopied] = useState(false);
+  const { t } = useT();
 
   const result = useMemo(() => {
-    return mode === 'format' ? formatJSON(input) : minifyJSON(input);
-  }, [input, mode]);
+    return mode === 'format' ? formatJSON(input, t) : minifyJSON(input, t);
+  }, [input, mode, t]);
 
   const error = result.ok ? null : result.error;
   const output = result.ok ? result.formatted : '';
@@ -33,20 +35,20 @@ export default function JSONTool() {
     <>
       <ToolLayout error={error}>
         <InputPanel
-          label="Input"
+          label={t('common.input')}
           action={
             <div className="flex gap-2">
               <button
                 onClick={() => setMode(mode === 'format' ? 'minify' : 'format')}
                 className="text-[11px] px-2 py-1 bg-surface-2 rounded text-text-muted hover:text-text-secondary transition-colors"
               >
-                {mode === 'format' ? 'Minify' : 'Format'}
+                {mode === 'format' ? t('json.minify') : t('json.format')}
               </button>
               <button
                 onClick={clear}
                 className="text-[11px] px-2 py-1 bg-surface-2 rounded text-text-muted hover:text-text-secondary transition-colors"
               >
-                Clear
+                {t('common.clear')}
               </button>
             </div>
           }
@@ -54,13 +56,13 @@ export default function JSONTool() {
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Paste JSON here..."
+            placeholder={t('json.placeholder')}
             className="w-full bg-transparent border-none text-text-secondary text-[13px] leading-relaxed p-4 resize-none min-h-[240px] outline-none font-mono placeholder:text-text-dim"
             spellCheck={false}
           />
         </InputPanel>
         <OutputPanel
-          label="Output"
+          label={t('common.output')}
           action={
             <button
               onClick={copy}
@@ -73,7 +75,7 @@ export default function JSONTool() {
                     : 'bg-surface-2 text-text-dim cursor-not-allowed'
               }`}
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? t('common.copied') : t('common.copy')}
             </button>
           }
         >
@@ -83,20 +85,19 @@ export default function JSONTool() {
             </pre>
           ) : (
             <div className="p-4 text-[13px] text-text-dim min-h-[240px]">
-              Paste your input above to see the result.
+              {t('common.pasteToSeeResult')}
             </div>
           )}
         </OutputPanel>
       </ToolLayout>
-      <Explanation title="What does this tool do?">
+      <Explanation title={t('common.whatDoesThisDo')}>
         <p className="text-[13px] text-text-muted leading-relaxed">
-          Formats compressed or minified JSON into a readable, indented structure.
-          Also validates JSON syntax and highlights errors with the exact position.
+          {t('json.explanation')}
         </p>
         <ul className="mt-2 text-[13px] text-text-muted leading-loose list-disc pl-5">
-          <li>Toggle between Format and Minify modes</li>
-          <li>Instant output as you type or paste</li>
-          <li>Copy formatted result with one click</li>
+          <li>{t('json.feature1')}</li>
+          <li>{t('json.feature2')}</li>
+          <li>{t('json.feature3')}</li>
         </ul>
       </Explanation>
     </>
