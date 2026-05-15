@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { parseTimestamp, nowTimestamp } from './logic';
 
+const mockT = (key: string) => `[${key}]`;
+
 describe('parseTimestamp', () => {
   it('parses Unix epoch in seconds', () => {
     const result = parseTimestamp('1700000000');
@@ -81,5 +83,69 @@ describe('nowTimestamp', () => {
     expect(result.unix).toBeLessThanOrEqual(after);
     expect(result.iso).toBeTruthy();
     expect(result.rfc).toBeTruthy();
+  });
+});
+
+describe('parseTimestamp with t function', () => {
+  it('uses t for empty error', () => {
+    const result = parseTimestamp('', mockT);
+    expect(result).toEqual({ error: '[timestamp.error.empty]' });
+  });
+
+  it('uses t for unrecognized input', () => {
+    const result = parseTimestamp('not a date', mockT);
+    expect(result).toEqual({ error: '[timestamp.error.unrecognized]' });
+  });
+
+  it('uses t for relative time with past timestamp', () => {
+    const result = parseTimestamp('1700000000', mockT);
+    if (!('error' in result)) {
+      expect(result.relative).toContain('[timestamp.ago]');
+    }
+  });
+
+  it('uses t for seconds unit in relative time', () => {
+    const secondsAgo = Math.floor(Date.now() / 1000) - 30;
+    const result = parseTimestamp(String(secondsAgo), mockT);
+    if (!('error' in result)) {
+      expect(result.relative).toContain('[timestamp.secondsShort]');
+    }
+  });
+
+  it('uses t for minutes unit in relative time', () => {
+    const minutesAgo = Math.floor(Date.now() / 1000) - 120;
+    const result = parseTimestamp(String(minutesAgo), mockT);
+    if (!('error' in result)) {
+      expect(result.relative).toContain('[timestamp.minutesShort]');
+    }
+  });
+
+  it('uses t for hours unit in relative time', () => {
+    const hoursAgo = Math.floor(Date.now() / 1000) - 7200;
+    const result = parseTimestamp(String(hoursAgo), mockT);
+    if (!('error' in result)) {
+      expect(result.relative).toContain('[timestamp.hoursShort]');
+    }
+  });
+
+  it('uses t for months unit in relative time', () => {
+    // ~400 days ago to get into months range
+    const monthsAgo = Math.floor(Date.now() / 1000) - 400 * 86400;
+    const result = parseTimestamp(String(monthsAgo), mockT);
+    if (!('error' in result)) {
+      expect(result.relative).toContain('[timestamp.monthsShort]');
+    }
+  });
+
+  it('returns error for extremely large epoch', () => {
+    const result = parseTimestamp('999999999999999999999999999', mockT);
+    expect(result).toHaveProperty('error');
+  });
+});
+
+describe('nowTimestamp with t function', () => {
+  it('uses t for justNow', () => {
+    const result = nowTimestamp(mockT);
+    expect(result.relative).toBe('[timestamp.justNow]');
   });
 });
