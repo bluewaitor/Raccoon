@@ -1,4 +1,5 @@
 import { lazy, type LazyExoticComponent, type ComponentType } from 'react';
+import type { TranslationKey } from './i18n/types';
 
 export interface ToolRegistration {
   id: string;
@@ -9,52 +10,59 @@ export interface ToolRegistration {
   component: LazyExoticComponent<ComponentType>;
 }
 
-export const tools: ToolRegistration[] = [
+const toolDefs: {
+  id: string;
+  nameKey: TranslationKey;
+  descKey: TranslationKey;
+  keywords: string[];
+  icon: string;
+  component: LazyExoticComponent<ComponentType>;
+}[] = [
   {
     id: 'json',
-    name: 'JSON Formatter',
-    description: 'Format, minify, and validate JSON data',
+    nameKey: 'json.name',
+    descKey: 'json.description',
     keywords: ['json', 'format', 'minify', 'validate', 'pretty'],
     icon: '{ }',
     component: lazy(() => import('./tools/json/Tool')),
   },
   {
     id: 'timestamp',
-    name: 'Timestamp Converter',
-    description: 'Convert between Unix, ISO 8601, RFC 2822, and relative time',
+    nameKey: 'timestamp.name',
+    descKey: 'timestamp.description',
     keywords: ['timestamp', 'time', 'date', 'epoch', 'unix', 'iso'],
     icon: 'TS',
     component: lazy(() => import('./tools/timestamp/Tool')),
   },
   {
     id: 'base64',
-    name: 'Base64 Encoder',
-    description: 'Encode or decode Base64 strings',
+    nameKey: 'base64.name',
+    descKey: 'base64.description',
     keywords: ['base64', 'b64', 'encode', 'decode'],
     icon: 'B64',
     component: lazy(() => import('./tools/base64/Tool')),
   },
   {
     id: 'url',
-    name: 'URL Encoder',
-    description: 'Encode or decode URL components and query strings',
+    nameKey: 'url.name',
+    descKey: 'url.description',
     keywords: ['url', 'uri', 'encode', 'decode', 'percent'],
     icon: 'URL',
     component: lazy(() => import('./tools/url/Tool')),
   },
 ];
 
-export function findTool(id: string): ToolRegistration | undefined {
-  return tools.find((t) => t.id === id);
+export function getTools(t: (key: TranslationKey) => string): ToolRegistration[] {
+  return toolDefs.map((d) => ({
+    id: d.id,
+    name: t(d.nameKey),
+    description: t(d.descKey),
+    keywords: d.keywords,
+    icon: d.icon,
+    component: d.component,
+  }));
 }
 
-export function searchTools(query: string): ToolRegistration[] {
-  const q = query.toLowerCase().trim();
-  if (!q) return tools;
-  return tools.filter(
-    (t) =>
-      t.name.toLowerCase().includes(q) ||
-      t.description.toLowerCase().includes(q) ||
-      t.keywords.some((k) => k.includes(q)),
-  );
+export function findTool(id: string, t: (key: TranslationKey) => string): ToolRegistration | undefined {
+  return getTools(t).find((tool) => tool.id === id);
 }
