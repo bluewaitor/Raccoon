@@ -1,4 +1,5 @@
 import { createRootRoute, createRoute, createRouter, createHashHistory, RouterProvider, Outlet } from '@tanstack/react-router';
+import { I18nProvider } from './i18n/context';
 import { Header } from './components/Header';
 import { HomePage } from './components/HomePage';
 import { ToolPage } from './components/ToolPage';
@@ -42,5 +43,9 @@ declare module '@tanstack/react-router' {
 }
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <I18nProvider>
+      <RouterProvider router={router} />
+    </I18nProvider>
+  );
 }

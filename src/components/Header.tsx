@@ -1,4 +1,5 @@
 import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { LanguageToggle } from './LanguageToggle';
 
 export function Header() {
   const navigate = useNavigate();
@@ -7,15 +8,18 @@ export function Header() {
 
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b border-surface-2">
-      <button
-        onClick={() => navigate({ to: '/' })}
-        className="flex items-center gap-2.5 text-lg font-semibold text-text-primary hover:opacity-80 transition-opacity"
-      >
-        <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center text-sm font-mono text-white font-bold">
-          R
-        </div>
-        <span className="font-mono">Raccoon</span>
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => navigate({ to: '/' })}
+          className="flex items-center gap-2.5 text-lg font-semibold text-text-primary hover:opacity-80 transition-opacity"
+        >
+          <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center text-sm font-mono text-white font-bold">
+            R
+          </div>
+          <span className="font-mono">Raccoon</span>
+        </button>
+        <LanguageToggle />
+      </div>
       <button
         onClick={() => {
           if (isHome) {
