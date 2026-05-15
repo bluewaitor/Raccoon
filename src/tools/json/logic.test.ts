@@ -25,7 +25,7 @@ describe('formatJSON', () => {
     const result = formatJSON('{invalid}');
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error).toContain('Invalid JSON');
+      expect(result.error).toContain('json.error.invalid');
     }
   });
 

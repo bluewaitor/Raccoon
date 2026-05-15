@@ -59,7 +59,7 @@ describe('parseTimestamp', () => {
   it('includes relative time', () => {
     const result = parseTimestamp('1700000000');
     if (!('error' in result)) {
-      expect(result.relative).toMatch(/ago|from now/);
+      expect(result.relative).toMatch(/timestamp\.ago|timestamp\.fromNow/);
     }
   });
 
@@ -67,7 +67,7 @@ describe('parseTimestamp', () => {
     const future = Math.floor(Date.now() / 1000) + 3600;
     const result = parseTimestamp(String(future));
     if (!('error' in result)) {
-      expect(result.relative).toContain('from now');
+      expect(result.relative).toContain('timestamp.fromNow');
     }
   });
 });

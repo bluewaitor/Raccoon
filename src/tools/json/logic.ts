@@ -10,7 +10,10 @@ export interface FormatError {
 
 export type Result = FormatResult | FormatError;
 
-export function formatJSON(input: string): Result {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TFn = (key: any) => string;
+
+export function formatJSON(input: string, t: TFn = (k) => k): Result {
   if (!input.trim()) {
     return { ok: true, formatted: '' };
   }
@@ -20,12 +23,12 @@ export function formatJSON(input: string): Result {
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unknown error';
     const posMatch = msg.match(/position (\d+)/i);
-    const pos = posMatch ? ` at position ${posMatch[1]}` : '';
-    return { ok: false, error: `Invalid JSON: unexpected token${pos}` };
+    const pos = posMatch ? t('json.error.atPosition') + posMatch[1] : '';
+    return { ok: false, error: t('json.error.invalid') + pos };
   }
 }
 
-export function minifyJSON(input: string): Result {
+export function minifyJSON(input: string, t: TFn = (k) => k): Result {
   if (!input.trim()) {
     return { ok: true, formatted: '' };
   }
@@ -35,7 +38,7 @@ export function minifyJSON(input: string): Result {
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unknown error';
     const posMatch = msg.match(/position (\d+)/i);
-    const pos = posMatch ? ` at position ${posMatch[1]}` : '';
-    return { ok: false, error: `Invalid JSON: unexpected token${pos}` };
+    const pos = posMatch ? t('json.error.atPosition') + posMatch[1] : '';
+    return { ok: false, error: t('json.error.invalid') + pos };
   }
 }

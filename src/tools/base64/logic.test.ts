@@ -56,7 +56,7 @@ describe('decode', () => {
     const result = decode('!!!invalid!!!');
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error).toContain('Invalid Base64');
+      expect(result.error).toContain('base64.error.invalid');
     }
   });
 
@@ -64,7 +64,7 @@ describe('decode', () => {
     const result = decode('abc!!!def');
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.error).toContain('position');
+      expect(result.error).toContain('base64.error.atPosition');
     }
   });
 
