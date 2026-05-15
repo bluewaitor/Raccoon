@@ -11,7 +11,7 @@ export interface UrlError {
 export type Result = UrlResult | UrlError;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TFn = (key: any) => string;
+type TFn = (key: any, vars?: Record<string, string>) => string;
 
 export function encode(input: string, t: TFn = (k) => k): Result {
   try {
@@ -34,7 +34,7 @@ export function decode(input: string, t: TFn = (k) => k): Result {
     if (match) {
       return {
         ok: false,
-        error: t('url.error.invalidWithChar').replace('{char}', match[0]),
+        error: t('url.error.invalidWithChar', { char: match[0] }),
       };
     }
     return { ok: false, error: t('url.error.invalidGeneric') };
