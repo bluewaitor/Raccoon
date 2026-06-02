@@ -15,6 +15,7 @@
   "common.copy": "复制",
   "common.copied": "已复制！",
   "common.clear": "清空",
+  "common.tools": "工具",
   "common.whatDoesThisDo": "这个工具做什么？",
   "common.pasteToSeeResult": "在上方粘贴输入以查看结果。",
   "json.name": "JSON 格式化",

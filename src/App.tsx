@@ -2,6 +2,7 @@ import { createRootRoute, createRoute, createRouter, createHashHistory, RouterPr
 import { I18nProvider } from './i18n/context';
 import { Header } from './components/Header';
 import { HomePage } from './components/HomePage';
+import { ToolSidebar } from './components/ToolSidebar';
 import { ToolPage } from './components/ToolPage';
 
 const hashHistory = createHashHistory();
@@ -11,7 +12,12 @@ const rootRoute = createRootRoute({
     return (
       <div className="min-h-screen bg-surface-0">
         <Header />
-        <Outlet />
+        <div className="md:flex">
+          <ToolSidebar />
+          <div className="min-w-0 flex-1">
+            <Outlet />
+          </div>
+        </div>
       </div>
     );
   },

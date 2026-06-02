@@ -30,7 +30,7 @@ export function HomePage() {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-65px)] px-6">
+    <div className="flex min-h-[calc(100vh-154px)] flex-col items-center justify-center px-6 py-10 md:min-h-[calc(100vh-65px)]">
       <div className="text-center mb-12">
         <div
           onClick={() => setOpen(true)}

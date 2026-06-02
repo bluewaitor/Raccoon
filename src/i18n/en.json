@@ -15,6 +15,7 @@
   "common.copy": "Copy",
   "common.copied": "Copied!",
   "common.clear": "Clear",
+  "common.tools": "Tools",
   "common.whatDoesThisDo": "What does this tool do?",
   "common.pasteToSeeResult": "Paste your input above to see the result.",
   "json.name": "JSON Formatter",

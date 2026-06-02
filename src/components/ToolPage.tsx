@@ -33,7 +33,7 @@ export function ToolPage() {
 
   if (!tool) {
     return (
-      <main className="max-w-[960px] mx-auto px-6 py-8">
+      <main className="mx-auto max-w-[1120px] px-6 py-8">
         <div className="text-text-muted">{t('tool.notFound')}</div>
       </main>
     );
@@ -43,7 +43,7 @@ export function ToolPage() {
 
   return (
     <>
-      <main className="max-w-[960px] mx-auto px-6 py-8">
+      <main className="mx-auto max-w-[1120px] px-6 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-text-primary mb-1">{tool.name}</h1>
           <p className="text-sm text-text-muted leading-relaxed">{tool.description}</p>
