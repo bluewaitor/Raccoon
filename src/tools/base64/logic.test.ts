@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { encode, decode } from './logic';
 
+const mockT = (key: string) => `[${key}]`;
+
 describe('encode', () => {
   it('encodes ASCII text', () => {
     expect(encode('hello')).toEqual({ ok: true, output: 'aGVsbG8=' });
@@ -81,6 +83,34 @@ describe('decode', () => {
     if (encoded.ok) {
       const result = decode(encoded.output);
       expect(result).toEqual({ ok: true, output: '日本語テスト' });
+    }
+  });
+});
+
+describe('decode with t function', () => {
+  it('uses t for invalid Base64 error', () => {
+    const result = decode('!!!invalid!!!', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('[base64.error.invalid]');
+      expect(result.error).toContain('[base64.error.period]');
+    }
+  });
+
+  it('uses t for position in error', () => {
+    const result = decode('abc!!!def', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('[base64.error.atPosition]');
+    }
+  });
+
+  it('invalid without position uses no position message', () => {
+    // Input where invalid chars start at beginning (index 0)
+    const result = decode('!!!', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('[base64.error.invalid]');
     }
   });
 });
