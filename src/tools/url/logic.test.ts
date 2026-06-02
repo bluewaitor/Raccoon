@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { encode, decode } from './logic';
 
+const mockT = (key: string, vars?: Record<string, string>) => {
+  if (vars) {
+    let str = `[${key}]`;
+    for (const [k, v] of Object.entries(vars)) {
+      str = str.replace(`{${k}}`, v);
+    }
+    return str;
+  }
+  return `[${key}]`;
+};
+
 describe('encode', () => {
   it('encodes special characters', () => {
     const result = encode('hello world');
@@ -72,5 +83,28 @@ describe('decode', () => {
   it('decodes full URL', () => {
     const result = decode('https%3A%2F%2Fexample.com%2Fpath%3Fq%3Dhello');
     expect(result).toEqual({ ok: true, output: 'https://example.com/path?q=hello' });
+  });
+});
+
+describe('decode with t function', () => {
+  it('uses t with interpolation for specific char error', () => {
+    const result = decode('%ZZ', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      // mockT wraps key and replaces {char} if present in template
+      // Since [url.error.invalidWithChar] does not contain {char}, the raw key is used
+      expect(result.error).toContain('[url.error.invalidWithChar]');
+    }
+  });
+
+  it('uses t for generic invalid encoding error', () => {
+    // %G is not a valid hex digit but the regex may or may not match depending on input
+    // Use a truncated percent at end to trigger generic error
+    const result = decode('%', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      // Either specific or generic error, both use t function
+      expect(result.error).toContain('[url.error.');
+    }
   });
 });

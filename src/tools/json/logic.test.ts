@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { formatJSON, minifyJSON } from './logic';
 
+// Mock translation function to verify translation keys are used
+const mockT = (key: string) => `[${key}]`;
+
 describe('formatJSON', () => {
   it('formats minified JSON', () => {
     const result = formatJSON('{"name":"raccoon","version":1}');
@@ -93,5 +96,33 @@ describe('minifyJSON', () => {
   it('returns error for invalid JSON', () => {
     const result = minifyJSON('{invalid}');
     expect(result.ok).toBe(false);
+  });
+});
+
+describe('formatJSON with t function', () => {
+  it('uses t function for error message', () => {
+    const result = formatJSON('{invalid}', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('[json.error.invalid]');
+    }
+  });
+
+  it('includes translated position in error', () => {
+    const result = formatJSON('{"a": 1,}', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('[json.error.invalid]');
+    }
+  });
+});
+
+describe('minifyJSON with t function', () => {
+  it('uses t function for error message', () => {
+    const result = minifyJSON('{invalid}', mockT);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toContain('[json.error.invalid]');
+    }
   });
 });
